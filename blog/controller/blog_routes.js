@@ -5,16 +5,20 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blog_schema')
 
 //Middleware specific to this router
-blogRouter.get('/', (request, response) => {
-    Blog
-      .find({})
-      .then(blogs => {
-        response.json(blogs)
-      })
+blogRouter.get('/', async (request, response) => {
+    const blogs = await Blog.find({})
+
+    response.json(blogs)
   })
   
   blogRouter.post('/', (request, response) => {
     const blog = new Blog(request.body)
+
+    console.log(blog, blog.url)
+
+    if (blog.url == undefined && blog.title == undefined){
+      response.status(400).send({ error: "400 Bad Request" })
+    }
   
     blog
       .save()
